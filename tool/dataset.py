@@ -16,9 +16,10 @@ def generate_data(in_file, out_file):
         samples.append('{},{}'.format(content, label))
 
     shuffle(samples)
-    print('train samples count: {}.'.format(len(samples)))
+    print('samples count: {}.'.format(len(samples)))
 
     with open(out_file, 'w') as f:
+        f.write('content,label\n')
         f.write('\n'.join(samples))
 
 
@@ -33,5 +34,6 @@ def get_test_examples():
 if __name__ == '__main__':
     generate_data('uf_train.csv', '../data/UNFRIENDLY/train.csv')
     generate_data('uf_test.csv', '../data/UNFRIENDLY/dev.csv')
+    generate_data('uf_test.csv', '../data/UNFRIENDLY/test.csv')
     # get_test_examples()
 
