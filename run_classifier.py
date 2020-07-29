@@ -25,6 +25,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
+import pandas as pd
 
 flags = tf.flags
 
@@ -202,6 +203,34 @@ class DataProcessor(object):
       for line in reader:
         lines.append(line)
       return lines
+
+
+class UnfriendlyProcessor(DataProcessor):
+    """Processor for the UNFRIENDLY data set"""
+    def __int__(self):
+        self.language = 'zh'
+
+    def get_train_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, 'train.csv'), 'train')
+
+    def get_dev_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, 'dev.csv'), 'dev')
+
+    def get_test_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, 'test.csv'), 'test')
+
+    def get_labels(self):
+        return ['0', '1']
+
+    def _create_examples(self, file_path, set_type):
+        examples = []
+        df_file = pd.read_csv(file_path, sep=',', header=0, index_col=None)
+        for idx, row in df_file.iterrows():
+            guid = '%s-%d' % (set_type, idx)
+            text_a = tokenization.convert_to_unicode(row['content'])
+            label = str(row['label'])
+            examples.append(InputExample(guid=guid, text_a=text_a, label=label))
+        return examples
 
 
 class XnliProcessor(DataProcessor):
@@ -788,6 +817,7 @@ def main(_):
       "mnli": MnliProcessor,
       "mrpc": MrpcProcessor,
       "xnli": XnliProcessor,
+      "unfriendly": UnfriendlyProcessor
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
