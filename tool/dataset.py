@@ -6,14 +6,16 @@ import pandas as pd
 def generate_data(in_file, out_file):
     df_file = pd.read_csv(in_file, sep=',', header=0, index_col=None)
     samples = []
-    for idx, row in df_file.iterrows():
-        content = row['content']
+    content = ''
+    for _, row in df_file.iterrows():
+        content += row['content']
         label = row['label']
         if pd.isna(label):
             continue
 
         label = str(int(label))
         samples.append('{},{}'.format(content, label))
+        content = ''
 
     shuffle(samples)
     print('samples count: {}.'.format(len(samples)))
